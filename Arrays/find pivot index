@@ -1,0 +1,17 @@
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int s=0;
+        for(int num:nums)
+        s+=num;
+        int c=0;
+        for(int i=0;i<nums.length;i++)
+        {
+            
+            if(c==s-c-nums[i])
+            return i;
+            c+=nums[i];
+        }
+        return -1;
+        
+    }
+}
