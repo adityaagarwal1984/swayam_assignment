@@ -1,0 +1,28 @@
+import java.util.*;
+
+public class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        // Step 1: Store all elements of nums1 in a set
+        Set<Integer> set1 = new HashSet<>();
+        for (int num : nums1) {
+            set1.add(num);
+        }
+
+        // Step 2: Create another set to store intersection result
+        Set<Integer> resultSet = new HashSet<>();
+        for (int num : nums2) {
+            if (set1.contains(num)) {
+                resultSet.add(num); // avoid duplicates automatically
+            }
+        }
+
+        // Step 3: Convert set to int array
+        int[] result = new int[resultSet.size()];
+        int i = 0;
+        for (int num : resultSet) {
+            result[i++] = num;
+        }
+
+        return result;
+    }
+}
