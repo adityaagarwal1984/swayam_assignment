@@ -1,0 +1,17 @@
+class Solution {
+    static int evenlyDivides(int n) {
+        return helper(n, n);  // pass both original and current value
+    }
+
+    static int helper(int original, int num) {
+        if (num == 0)
+            return 0;
+
+        int d = num % 10;
+        if (d != 0 && original % d == 0)
+            return 1 + helper(original, num / 10);
+        else
+            return helper(original, num / 10);
+    }
+}
+
