@@ -1,0 +1,31 @@
+import java.util.*;
+
+class Solution {
+    public char getMaxOccuringChar(String s) {
+        // Frequency map to count occurrences of each character
+        HashMap<Character, Integer> map = new HashMap<>();
+
+        // Count frequency of each character
+        for (char ch : s.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+
+        // Track max frequency and corresponding character
+        int maxFreq = 0;
+        char maxChar = 'a'; // default (if lowercase letters are expected)
+
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            char ch = entry.getKey();
+            int freq = entry.getValue();
+
+            // If frequency is higher, update max
+            // If equal, choose lexicographically smaller character
+            if (freq > maxFreq || (freq == maxFreq && ch < maxChar)) {
+                maxFreq = freq;
+                maxChar = ch;
+            }
+        }
+
+        return maxChar;
+    }
+}
