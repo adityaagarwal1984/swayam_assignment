@@ -1,0 +1,20 @@
+class Solution {
+    public boolean isPerfectSquare(int num) {
+        if (num == 1) return true;
+        long lb = 1;
+        long ub = num;
+
+        while (lb <= ub) {
+            long mid = lb + (ub - lb) / 2;
+            long square = mid * mid;
+
+            if (square == num)
+                return true;
+            else if (square < num)
+                lb = mid + 1;
+            else
+                ub = mid - 1;
+        }
+        return false;
+    }
+}
