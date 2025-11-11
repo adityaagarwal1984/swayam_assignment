@@ -1,0 +1,61 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> list = new ArrayList<>();
+        List<List<Integer>> ans = new ArrayList<>();
+
+        if (root == null)
+            return list;
+
+        Queue<TreeNode> que = new LinkedList<>();
+        que.offer(root);
+
+        solve(root, list, que);        
+
+        int l = list.size();
+        for (int i = 0; i < l; i++) {
+            if (i % 2 == 0)
+                ans.add(new ArrayList<>(list.get(i)));
+            else {
+                List<Integer> temp = new ArrayList<>(list.get(i));
+                Collections.reverse(temp);
+                ans.add(temp);
+            }
+        }
+
+        return ans;
+    }
+
+    public void solve(TreeNode root, List<List<Integer>> list, Queue<TreeNode> que) {
+        while (!que.isEmpty()) {
+            int len = que.size();
+            List<Integer> slist = new ArrayList<>();
+
+            for (int i = 0; i < len; i++) {
+                TreeNode node = que.poll();
+                slist.add(node.val);
+
+                if (node.left != null)
+                    que.offer(node.left);
+                if (node.right != null)
+                    que.offer(node.right);
+            }
+
+            list.add(slist);
+        }
+    }
+}
