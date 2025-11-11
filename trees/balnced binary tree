@@ -1,0 +1,69 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        if(root==null)
+        return true;
+        int ans=heigth(root);
+        if(ans==-1) 
+        return false;
+        else
+        return true;
+           }
+
+        // if(Math.abs(height(root.left)-height(root.right))>1)
+        // return false;
+        // boolean right=isBalanced(root.right);
+        // boolean left=isBalanced(root.left);
+        // if(!right || !left)
+        // return false;
+        // else
+        // return true;
+        public int heigth(TreeNode root)
+        {
+        if(root==null)
+        return 0;
+        int left=heigth(root.left);
+        int right=heigth(root.right);
+        if(right==-1 || left==-1)
+        return -1;
+    
+        if(Math.abs(left-right)>1)
+        return -1;
+        return Math.max(left,right)+1;
+        }
+    }
+    //  public int height(TreeNode node)
+    // {
+    //     int c=0;
+    //     if(node==null)
+    //     return 0;
+    //     Queue<TreeNode> que = new LinkedList<>();
+    //     que.offer(node);
+    //     while(!que.isEmpty())
+    //     {
+    //         int l=que.size();
+    //         for(int i=0;i<l;i++)
+    //         {
+    //             que.offer(node.left);
+    //             que.offer(node.right);
+    //             que.poll();
+
+    //         }
+    //         c++;
+    //     }
+    //     return c;
+    // }
