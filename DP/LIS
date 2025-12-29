@@ -1,0 +1,22 @@
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+return maxlength(nums,nums.length-1,Integer.MAX_VALUE);
+        
+    }
+
+    public int maxlength(int arr[],int idx,int prev)
+    {
+        if(idx==0 && arr[idx]<prev)
+        return 1;
+        if(idx<0)
+        return 0;
+        int nottake=maxlength(arr,idx-1,prev);
+        int take=0;
+        if(arr[idx]<prev)
+        {
+        take=1+maxlength(arr,idx-1,arr[idx]);
+
+        }
+        return Math.max(take,nottake);
+    }
+}
