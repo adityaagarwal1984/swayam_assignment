@@ -1,0 +1,54 @@
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int n = nums.length;
+
+        // dp[i][j] = answer for idx = i-1 and prevIdx = j-1
+        int[][] dp = new int[n + 1][n + 1];
+
+        // dp[0][*] = 0 already (idx < 0 case)
+
+        for (int i = 1; i <= n; i++) {
+            for (int prevIdx = -1; prevIdx < i - 1; prevIdx++) {
+
+                // not take nums[i-1]
+                int nottake = dp[i - 1][prevIdx + 1];
+
+                // take nums[i-1]
+                int take = 0;
+                if (prevIdx == -1 || nums[i - 1] < nums[prevIdx]) {
+                    take = 1 + dp[i - 1][i];
+                }
+
+                dp[i][prevIdx + 1] = Math.max(take, nottake);
+            }
+        }
+
+        return dp[n][0]; // prevIdx = -1
+    }
+}  
+// this is the dp solution 
+
+
+------------------------------best code for this solution-------------------------------------------------------- 
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+
+        // Every element alone is an LIS of length 1
+        Arrays.fill(dp, 1);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    dp[i] = Math.max(dp[i], 1 + dp[j]);
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int x : dp) ans = Math.max(ans, x);
+        return ans;
+    }
+}
+
