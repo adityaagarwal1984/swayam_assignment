@@ -1,0 +1,71 @@
+class Solution {
+    static final long MOD = 1000000007;
+
+    public int numDecodings(String s) {
+        int n = s.length();
+        long[] dp = new long[n + 1];
+
+        dp[n] = 1;  // empty string = 1 way
+
+        for (int i = n - 1; i >= 0; i--) {
+            char c = s.charAt(i);
+
+            // Case 0: cannot decode alone
+            if (c == '0') {
+                dp[i] = 0;
+                continue;
+            }
+
+            long res = 0;
+
+            // ---- Single character decode ----
+            if (c == '*') {
+                // '*' can be 1..9
+                res = (res + 9 * dp[i + 1]) % MOD;
+            } else {
+                // '1'..'9'
+                res = (res + dp[i + 1]) % MOD;
+            }
+
+            // ---- Two character decode ----
+            if (i + 1 < n) {
+                char d = s.charAt(i + 1);
+
+                if (c == '*') {
+                    // '*' + digit
+                    if (d == '*') {
+                        // "**" -> 11-19 & 21-26 => 15 ways
+                        res = (res + 15 * dp[i + 2]) % MOD;
+                    } else if (d >= '0' && d <= '6') {
+                        // "*0..6" -> 10..16 or 20..26 => 2 ways
+                        res = (res + 2 * dp[i + 2]) % MOD;
+                    } else {
+                        // "*7..9" -> 17..19 only => 1 way
+                        res = (res + dp[i + 2]) % MOD;
+                    }
+                } 
+                else if (c == '1') {
+                    // "1?" always valid -> 10..19
+                    if (d == '*') {
+                        res = (res + 9 * dp[i + 2]) % MOD; // 11..19
+                    } else {
+                        res = (res + dp[i + 2]) % MOD;
+                    }
+                }
+                else if (c == '2') {
+                    // "2?" -> only valid if <=26
+                    if (d == '*') {
+                        // 21..26 -> 6 ways
+                        res = (res + 6 * dp[i + 2]) % MOD;
+                    } else if (d >= '0' && d <= '6') {
+                        res = (res + dp[i + 2]) % MOD;
+                    }
+                }
+            }
+
+            dp[i] = res;
+        }
+
+        return (int) dp[0];
+    }
+}
