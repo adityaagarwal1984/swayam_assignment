@@ -1,0 +1,31 @@
+class Solution {
+    Integer[] dp;
+
+    public int minCut(String s) {
+        dp = new Integer[s.length()];
+        return solve(s, 0);
+    }
+
+    private int solve(String s, int start) {
+        if (start == s.length()) return -1;  
+        if (dp[start] != null) return dp[start];
+
+        int min = Integer.MAX_VALUE;
+
+        for (int end = start; end < s.length(); end++) {
+            if (isPalin(s, start, end)) {
+                min = Math.min(min, 1 + solve(s, end + 1));
+            }
+        }
+        return dp[start] = min;
+    }
+
+    private boolean isPalin(String s, int i, int j) {
+        while (i < j) {
+            if (s.charAt(i) != s.charAt(j)) return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
+}
