@@ -1,0 +1,36 @@
+class Solution {
+    public String stoneGameIII(int[] stoneValue) {
+        int dp[]= new int[stoneValue.length];
+        
+        Arrays.fill(dp,-1);
+        int diff=solveforalice(stoneValue,0,dp);
+        if(diff>0)
+        return "Alice";
+        else if(diff<0)
+        return "Bob";
+        else
+        return "Tie";
+    }
+    public int solveforalice(int arr[],int i,int dp[])
+    {
+        if(i>=arr.length)
+        {
+           
+            return 0;
+        }
+        if(dp[i]!=-1)
+        return dp[i];
+        int stone=0;
+        int result=Integer.MIN_VALUE;
+        for(int x=1;x<=Math.min(3,arr.length-i);x++)
+        {
+            stone+=arr[i+x-1];
+           
+             result=Math.max(result,stone-solveforalice(arr,i+x,dp));
+        
+        }
+        return dp[i]=result;
+    }
+
+    
+}
