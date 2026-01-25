@@ -1,0 +1,38 @@
+class Solution {
+
+    Integer[][][] dp;
+
+    public int countDigitOne(int n) {
+        String s = Integer.toString(n);
+        int len = s.length();
+
+        // dp[idx][tight][cnt_of_1]
+        dp = new Integer[len + 1][2][len + 1];
+
+        return solve(s, 0, 1, 0);
+    }
+
+    private int solve(String s, int idx, int tight, int cntOfOne) {
+        if (idx == s.length()) {
+            return cntOfOne;
+        }
+
+        if (dp[idx][tight][cntOfOne] != null) {
+            return dp[idx][tight][cntOfOne];
+        }
+
+        int ub = (tight == 1) ? s.charAt(idx) - '0' : 9;
+        int res = 0;
+
+        for (int dig = 0; dig <= ub; dig++) {
+            res += solve(
+                    s,
+                    idx + 1,
+                    (tight == 1 && dig == ub) ? 1 : 0,
+                    cntOfOne + (dig == 1 ? 1 : 0)
+            );
+        }
+
+        return dp[idx][tight][cntOfOne] = res;
+    }
+}
