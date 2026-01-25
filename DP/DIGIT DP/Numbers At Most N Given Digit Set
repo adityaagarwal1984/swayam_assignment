@@ -1,0 +1,36 @@
+class Solution {
+    public int atMostNGivenDigitSet(String[] digits, int n) {
+        String s= Integer.toString(n);
+        int len= s.length();
+        int d=digits.length;
+        int res=0;
+        for(int i=1;i<len;i++)
+        {
+            res+=Math.pow(d,i);
+        }
+        int dp[][]= new int[s.length()+1][2];
+        for(int i=0;i<=s.length();i++)
+        Arrays.fill(dp[i],-1);
+        res+=solve(s,0,1,digits,dp);
+        return res;
+    }
+    public int solve(String s,int idx,int tight,String arr[],int dp[][])
+    {
+        if(idx==s.length())
+        {
+            return 1;
+        }
+        if(dp[idx][tight]!=-1)
+        return dp[idx][tight];
+        int res=0;
+        for(int i=0;i<arr.length;i++)
+        {
+            if(tight==1 && Integer.parseInt(arr[i])>(s.charAt(idx)-'0'))
+            continue;
+            res+=solve(s,idx+1,(tight==1 && Integer.parseInt(arr[i])==(s.charAt(idx)-'0')?1:0),arr,dp);
+            
+        }
+        return dp[idx][tight]=res;
+
+    }
+}
