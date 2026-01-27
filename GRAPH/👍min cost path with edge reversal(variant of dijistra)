@@ -1,0 +1,66 @@
+import java.util.*;
+
+class Solution {
+
+    static class Node {
+        int v, cost;
+        Node(int v, int cost) {
+            this.v = v;
+            this.cost = cost;
+        }
+    }
+
+    public int minCost(int n, int[][] edges) {
+
+        ArrayList<ArrayList<int[]>> out = new ArrayList<>();
+        ArrayList<ArrayList<int[]>> in  = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            out.add(new ArrayList<>());
+            in.add(new ArrayList<>());
+        }
+
+        // build outgoing and incoming lists
+        for (int[] e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+            out.get(u).add(new int[]{v, w});
+            in.get(v).add(new int[]{u, w});
+        }
+
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        PriorityQueue<Node> pq =
+                new PriorityQueue<>((a, b) -> a.cost - b.cost);
+
+        dist[0] = 0;
+        pq.offer(new Node(0, 0));
+
+        while (!pq.isEmpty()) {
+            Node cur = pq.poll();
+
+            if (cur.cost > dist[cur.v]) continue;
+
+            // normal outgoing edges
+            for (int[] e : out.get(cur.v)) {
+                int next = e[0], w = e[1];
+                if (cur.cost + w < dist[next]) {
+                    dist[next] = cur.cost + w;
+                    pq.offer(new Node(next, dist[next]));
+                }
+            }
+
+            // reversed incoming edges (use switch)
+            for (int[] e : in.get(cur.v)) {
+                int next = e[0], w = e[1];
+                int newCost = cur.cost + 2 * w;
+                if (newCost < dist[next]) {
+                    dist[next] = newCost;
+                    pq.offer(new Node(next, newCost));
+                }
+            }
+        }
+
+        return dist[n - 1] == Integer.MAX_VALUE ? -1 : dist[n - 1];
+    }
+}
