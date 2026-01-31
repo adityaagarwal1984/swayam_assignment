@@ -1,0 +1,62 @@
+class Solution {
+    public String findOrder(String[] words) {
+
+        HashSet<Character> set = new HashSet<>();
+
+        // 1️⃣ Collect all characters
+        for (String w : words) {
+            for (char c : w.toCharArray()) {
+                set.add(c);
+            }
+        }
+
+        HashMap<Character, ArrayList<Character>> adj = new HashMap<>();
+        HashMap<Character, Integer> indeg = new HashMap<>();
+
+        for (char c : set) {
+            adj.put(c, new ArrayList<>());
+            indeg.put(c, 0);
+        }
+
+        // 2️⃣ Build graph
+        for (int i = 0; i < words.length - 1; i++) {
+            String a = words[i];
+            String b = words[i + 1];
+
+            // Prefix invalid case
+            if (a.length() > b.length() && a.startsWith(b)) {
+                return "";
+            }
+
+            for (int j = 0; j < Math.min(a.length(), b.length()); j++) {
+                if (a.charAt(j) != b.charAt(j)) {
+                    char u = a.charAt(j);
+                    char v = b.charAt(j);
+                    adj.get(u).add(v);
+                    indeg.put(v, indeg.get(v) + 1);
+                    break;
+                }
+            }
+        }
+
+        // 3️⃣ Kahn's Algorithm
+        Queue<Character> q = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+
+        for (char c : indeg.keySet()) {
+            if (indeg.get(c) == 0) q.offer(c);
+        }
+
+        while (!q.isEmpty()) {
+            char cur = q.poll();
+            sb.append(cur);
+            for (char nei : adj.get(cur)) {
+                indeg.put(nei, indeg.get(nei) - 1);
+                if (indeg.get(nei) == 0) q.offer(nei);
+            }
+        }
+
+        // 4️⃣ Cycle check
+        return sb.length() == set.size() ? sb.toString() : "";
+    }
+}
