@@ -1,0 +1,51 @@
+class Solution {
+    static int[][] dir = {{0,1},{1,0},{0,-1},{-1,0}};
+
+    class Node {
+        int we, i, j;
+        Node(int we, int i, int j) {
+            this.we = we;
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public int minimumEffortPath(int[][] heights) {
+        int m = heights.length, n = heights[0].length;
+        int[][] dist = new int[m][n];
+
+        for (int i = 0; i < m; i++)
+            Arrays.fill(dist[i], Integer.MAX_VALUE);
+
+        PriorityQueue<Node> pq =
+            new PriorityQueue<>((a, b) -> a.we - b.we);
+
+        dist[0][0] = 0;
+        pq.offer(new Node(0, 0, 0));
+
+        while (!pq.isEmpty()) {
+            Node curr = pq.poll();
+            int effort = curr.we, i = curr.i, j = curr.j;
+
+            if (i == m - 1 && j == n - 1)
+                return effort;
+
+            for (int[] d : dir) {
+                int nx = i + d[0];
+                int ny = j + d[1];
+
+                if (nx >= 0 && ny >= 0 && nx < m && ny < n) {
+                    int newEffort =
+                        Math.max(effort,
+                            Math.abs(heights[i][j] - heights[nx][ny]));
+
+                    if (newEffort < dist[nx][ny]) {
+                        dist[nx][ny] = newEffort;
+                        pq.offer(new Node(newEffort, nx, ny));
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+}
