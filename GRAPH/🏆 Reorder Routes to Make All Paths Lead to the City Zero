@@ -1,0 +1,41 @@
+class Solution {
+    class node{
+        int n;
+        int val;
+        node(int no,int v)
+        {
+            this.n=no;
+            this.val=v;
+        }
+    }
+    ArrayList<ArrayList<node>> adj;
+    int ans=0;
+    boolean vis[];
+    public int minReorder(int n, int[][] connections) {
+        adj= new ArrayList<>();
+        for(int i=0;i<n;i++)
+        adj.add(new ArrayList<node>());
+        for(int a[]:connections)
+        {
+            adj.get(a[0]).add(new node(a[1],1));
+            adj.get(a[1]).add(new node(a[0],0));
+        }
+         vis= new boolean[n];
+        dfs(0);
+        return ans;
+    }
+    public void dfs(int n)
+    {
+        vis[n]=true;
+        for(node curr:adj.get(n))
+        {
+            int val=curr.val;
+            int nei=curr.n;
+            if(!vis[nei])
+            {
+            ans+=val;
+            dfs(nei);
+            }
+        }
+    }
+}   
