@@ -1,0 +1,15 @@
+class Solution {
+    public int snakesAndLadders(int[][] board) {
+    int n=board.length;
+    boolean vis[][]= new boolean[n][n];
+    vis[n-1][0]=true;
+    Queue<Integer> que= new LinkedList<>();
+    que.offer(1);
+    int move=0;
+    while(!que.isEmpty())
+    {
+…            y=(n-1)-(y);
+        }
+        return new int[]{row,y};
+    }
+}
