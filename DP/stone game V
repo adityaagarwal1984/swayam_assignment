@@ -1,0 +1,57 @@
+class Solution {
+    public int stoneGameV(int[] stoneValue) {
+        int n= stoneValue.length;
+        int dp[][]= new int[n][n];
+        for(int i=0;i<n;i++)
+        Arrays.fill(dp[i],-1);
+        int sum[]= new int[n+1];
+        
+        int s=0;
+        for(int i=0;i<n;i++)
+        {
+            s+=stoneValue[i];
+            sum[i+1]=s;
+        }
+        return solve(stoneValue,dp,0,n-1,sum);
+
+    }
+    public int solve(int arr[],int dp[][],int s,int e,int sum[])
+    {
+        if(s==e)
+        return 0;
+        if(dp[s][e]!=-1)
+        return dp[s][e];
+        //    adi avoid this blunder -> int stone=0;
+        int max=Integer.MIN_VALUE;
+        for(int x=1;x<=(e-s);x++)
+        {
+            int sum1= sum[s+x]-sum[s];
+            int sum2=sum[e+1]-sum[s+x];
+            if(sum1<sum2)
+            {
+                
+                max=Math.max(max,sum1+solve(arr,dp,s,s+x-1,sum));
+            }
+            else if(sum2<sum1)
+            {
+                    
+                    max=Math.max(max,sum2+solve(arr,dp,s+x,e,sum));
+            }
+            else
+            {
+                
+                int max1=sum1+solve(arr,dp,s,s+x-1,sum);
+                int max2=sum2+solve(arr,dp,s+x,e,sum);
+                max=Math.max(max1,max2);
+            }
+        }
+        return dp[s][e]= max;
+    }
+    // public int sum(int arr[],int i,int j)
+    // {
+    //     int s=0;
+    //     for(int k=i;k<=j;k++)
+    //     s+=arr[k];
+    //     return s;
+    // }
+}
