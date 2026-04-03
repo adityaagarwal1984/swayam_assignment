@@ -1,0 +1,46 @@
+class Solution {
+    public int maxEnvelopes(int[][] envelopes) {
+        // Sort width ascending, then height DESCENDING
+        Arrays.sort(envelopes, (a, b) -> {
+            if (a[0] == b[0]) return b[1] - a[1]; 
+            return a[0] - b[0];
+        });
+
+        ArrayList<Integer> ls= new ArrayList<>();
+        ls.add(envelopes[0][1]);
+        for(int i=1;i<envelopes.length;i++)
+        {
+            int h= envelopes[i][1];
+            if(h>ls.get(ls.size()-1))
+            ls.add(h);
+            else
+            {
+                int id=ceil(ls,h);
+                ls.set(id,h);
+            }
+        }
+        return ls.size();
+    }
+    public int ceil(ArrayList<Integer> ls,int num)
+    {
+        int lb=0;
+        int ub= ls.size()-1;
+        int ans=-1;
+        while(lb<=ub)
+        {
+            int mid=lb+(ub-lb)/2;
+            if(ls.get(mid)==num)
+            return mid;
+            else if(ls.get(mid)>num)
+            {
+                ans=mid;
+                ub=mid-1;
+            }
+            else
+            {
+                lb=mid+1;
+            }
+        }
+        return ans;
+    }
+}
