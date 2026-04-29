@@ -1,0 +1,48 @@
+class Solution {
+    public long maximumProfit(int[] prices, int k) {
+        int n = prices.length;
+        // State j: 0 = Empty, 1 = Holding (Normal), 2 = Shorting (Short)
+        Long[][][] dp = new Long[n][3][k + 1];
+        return solve(prices, 0, 0, k, dp);
+    }
+
+    public long solve(int[] arr, int i, int state, int cap, Long[][][] dp) {
+        if (i == arr.length)
+        {
+            return (state==0)?0:Integer.MIN_VALUE;
+        }
+        if( cap == 0) return 0;
+        if (dp[i][state][cap] != null) return dp[i][state][cap];
+
+        long profit = 0;
+
+        if (state == 0) {
+            // Choice 1: Start Normal Buy
+            long buyNormal = -arr[i] + solve(arr, i + 1, 1, cap, dp);
+            // Choice 2: Start Short Sell
+            long sellShort = arr[i] + solve(arr, i + 1, 2, cap, dp);
+            // Choice 3: Skip today
+            long skip = solve(arr, i + 1, 0, cap, dp);
+            
+            profit = Math.max(buyNormal, Math.max(sellShort, skip));
+        } 
+        else if (state == 1) {
+            // Choice 1: Sell to complete Normal Transaction (Cap reduces here)
+            long sellNormal = arr[i] + solve(arr, i + 1, 0, cap - 1, dp);
+            // Choice 2: Hold
+            long hold = solve(arr, i + 1, 1, cap, dp);
+            
+            profit = Math.max(sellNormal, hold);
+        } 
+        else if (state == 2) {
+            // Choice 1: Buy back to complete Short Transaction (Cap reduces here)
+            long buyBack = -arr[i] + solve(arr, i + 1, 0, cap - 1, dp);
+            // Choice 2: Stay in Short
+            long stayShort = solve(arr, i + 1, 2, cap, dp);
+            
+            profit = Math.max(buyBack, stayShort);
+        }
+
+        return dp[i][state][cap] = profit;
+    }
+}
