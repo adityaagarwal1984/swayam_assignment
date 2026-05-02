@@ -12,3 +12,5 @@ class Solution {
         return dp[n];
     }
 }
+ --------------------------remember of finding nth catalan number which gives no of structurally different bst
+formula is (2n)!/ (n! * (n+1)!)   
