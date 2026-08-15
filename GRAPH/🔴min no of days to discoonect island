@@ -1,0 +1,94 @@
+class Solution {
+    int m, n;
+    int time = 0;
+    int landCount = 0;
+    boolean hasArticulationPoint = false;
+    
+    int[] tin, low;
+    boolean[] vis;
+    
+    int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    public int minDays(int[][] grid) {
+        m = grid.length;
+        n = grid[0].length;
+        int totalCells = m * n;
+
+        tin = new int[totalCells];
+        low = new int[totalCells];
+        vis = new boolean[totalCells];
+
+        int components = 0;
+
+        // 1. Count connected components and run Tarjan's
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && !vis[toId(i, j)]) {
+                    components++;
+                    if (components > 1) {
+                        return 0; // Already more than 1 island
+                    }
+                    dfs(i, j, -1, grid);
+                }
+            }
+        }
+
+        // Case: 0 islands initially
+        if (components == 0) return 0;
+
+        // Edge case: single land cell (e.g. [[1]]) takes 1 day to reach 0 islands
+        if (landCount == 1) return 1;
+
+        // Case: exists a bottleneck cell (articulation point)
+        if (hasArticulationPoint) return 1;
+
+        // Otherwise: 2 days are sufficient to isolate a corner cell
+        return 2;
+    }
+
+    private void dfs(int r, int c, int pId, int[][] grid) {
+        int u = toId(r, c);
+        vis[u] = true;
+        tin[u] = low[u] = ++time;
+        landCount++;
+
+        int children = 0;
+
+        for (int[] d : dirs) {
+            int nr = r + d[0];
+            int nc = c + d[1];
+
+            if (nr < 0 || nc < 0 || nr >= m || nc >= n || grid[nr][nc] == 0) {
+                continue;
+            }
+
+            int v = toId(nr, nc);
+            if (v == pId) continue; // Skip parent edge
+
+            if (vis[v]) {
+                // Back-edge
+                low[u] = Math.min(low[u], tin[v]);
+            } else {
+                // Forward tree edge
+                children++;
+                dfs(nr, nc, u, grid);
+                low[u] = Math.min(low[u], low[v]);
+
+                // Tarjan's Articulation Point condition:
+                // Non-root node condition
+                if (pId != -1 && low[v] >= tin[u]) {
+                    hasArticulationPoint = true;
+                }
+            }
+        }
+
+        // Root node condition (has 2 or more independent DFS subtree branches)
+        if (pId == -1 && children > 1) {
+            hasArticulationPoint = true;
+        }
+    }
+
+    private int toId(int r, int c) {
+        return r * n + c;
+    }
+}
