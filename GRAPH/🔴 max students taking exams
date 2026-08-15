@@ -1,0 +1,68 @@
+class Solution {
+    int[][] memo;
+    int m, n;
+    int[] broken; // broken[i] will store broken seats in row i as a mask
+
+    public int maxStudents(char[][] seats) {
+        m = seats.length;
+        n = seats[0].length;
+        
+        // Convert the '#' characters into integer masks for each row
+        broken = new int[m];
+        for (int i = 0; i < m; i++) {
+            int mask = 0;
+            for (int j = 0; j < n; j++) {
+                if (seats[i][j] == '#') {
+                    mask |= (1 << j); // mark seat j as broken
+                }
+            }
+            broken[i] = mask;
+        }
+
+        // memo[row][prev_mask]: row goes up to m, mask goes up to (1 << n) = 2^n
+        memo = new int[m][1 << n];
+        for (int[] row : memo) {
+            Arrays.fill(row, -1);
+        }
+
+        return solve(0, 0);
+    }
+
+    private int solve(int row, int prevMask) {
+        // Base Case: finished all rows
+        if (row == m) {
+            return 0;
+        }
+
+        if (memo[row][prevMask] != -1) {
+            return memo[row][prevMask];
+        }
+
+        int maxStudents = 0;
+        int totalConfigurations = 1 << n; // 2^n possibilities
+
+        // Try every possible configuration for the current row
+        for (int currMask = 0; currMask < totalConfigurations; currMask++) {
+            
+            // 1. Cannot place student in broken seat
+            if ((currMask & broken[row]) != 0) continue;
+
+            // 2. Cannot have adjacent students in the same row
+            if ((currMask & (currMask >> 1)) != 0) continue;
+
+            // 3. Cannot see diagonally to upper-left in prev row
+            if ((currMask & (prevMask << 1)) != 0) continue;
+
+            // 4. Cannot see diagonally to upper-right in prev row
+            if ((currMask & (prevMask >> 1)) != 0) continue;
+
+            // Count how many students we placed in currMask
+            int count = Integer.bitCount(currMask);
+
+            // Recurse to next row
+            maxStudents = Math.max(maxStudents, count + solve(row + 1, currMask));
+        }
+
+        return memo[row][prevMask] = maxStudents;
+    }
+}
