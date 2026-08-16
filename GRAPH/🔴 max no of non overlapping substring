@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Solution {
+    public List<String> maxNumOfSubstrings(String s) {
+        int n = s.length();
+        int[] first = new int[26];
+        int[] last = new int[26];
+        Arrays.fill(first, -1);
+        Arrays.fill(last, -1);
+        
+        // Step 1: Record first and last occurrence of each character
+        for (int i = 0; i < n; i++) {
+            int c = s.charAt(i) - 'a';
+            if (first[c] == -1) first[c] = i;
+            last[c] = i;
+        }
+        
+        // Step 2: Find all valid minimal intervals
+        List<int[]> intervals = new ArrayList<>();
+        
+        for (int i = 0; i < 26; i++) {
+            if (first[i] == -1) continue;
+            
+            int start = first[i];
+            int end = last[i];
+            boolean valid = true;
+            
+            // Expand the interval [start, end]
+            for (int k = start; k <= end; k++) {
+                int c = s.charAt(k) - 'a';
+                // If a character inside started before our 'start', discard
+                if (first[c] < start) {
+                    valid = false;
+                    break;
+                }
+                // Expand right boundary if needed
+                end = Math.max(end, last[c]);
+            }
+            
+            if (valid) {
+                intervals.add(new int[]{start, end});
+            }
+        }
+        
+        // Step 3: Greedy interval selection (Sort by end time)
+        intervals.sort((a, b) -> Integer.compare(a[1], b[1]));
+        
+        List<String> result = new ArrayList<>();
+        int lastEnd = -1;
+        
+        for (int[] interval : intervals) {
+            int start = interval[0];
+            int end = interval[1];
+            
+            // If it doesn't overlap with the previously chosen interval
+            if (start > lastEnd) {
+                result.add(s.substring(start, end + 1));
+                lastEnd = end;
+            }
+        }
+        
+        return result;
+    }
+}
