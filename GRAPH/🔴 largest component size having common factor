@@ -1,0 +1,66 @@
+import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+    static class DSU {
+        int[] parent;
+
+        DSU(int n) {
+            parent = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        int find(int i) {
+            if (parent[i] == i) return i;
+            return parent[i] = find(parent[i]); // Path compression
+        }
+
+        void union(int i, int j) {
+            int rootI = find(i);
+            int rootJ = find(j);
+            if (rootI != rootJ) {
+                parent[rootI] = rootJ;
+            }
+        }
+    }
+
+    public int largestComponentSize(int[] nums) {
+        int maxVal = 0;
+        for (int num : nums) {
+            maxVal = Math.max(maxVal, num);
+        }
+
+        DSU dsu = new DSU(maxVal + 1);
+
+        // 1. Union each number with its prime factors
+        for (int num : nums) {
+            int temp = num;
+            for (int p = 2; p * p <= temp; p++) {
+                if (temp % p == 0) {
+                    dsu.union(num, p);
+                    while (temp % p == 0) {
+                        temp /= p;
+                    }
+                }
+            }
+            if (temp > 1) {
+                dsu.union(num, temp);
+            }
+        }
+
+        // 2. Count frequency of each root leader only for elements in nums
+        Map<Integer, Integer> rootCount = new HashMap<>();
+        int maxComponent = 0;
+
+        for (int num : nums) {
+            int root = dsu.find(num);
+            int count = rootCount.getOrDefault(root, 0) + 1;
+            rootCount.put(root, count);
+            maxComponent = Math.max(maxComponent, count);
+        }
+
+        return maxComponent;
+    }
+}
