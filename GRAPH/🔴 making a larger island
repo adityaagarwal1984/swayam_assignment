@@ -1,0 +1,94 @@
+import java.util.HashSet;
+import java.util.Set;
+
+class Solution {
+    static class DSU {
+        int[] parent;
+        int[] size;
+
+        DSU(int n) {
+            parent = new int[n];
+            size = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+
+        int find(int node) {
+            if (parent[node] == node) {
+                return node;
+            }
+            return parent[node] = find(parent[node]); // Path compression
+        }
+
+        void union(int u, int v) {
+            int rootU = find(u);
+            int rootV = find(v);
+            if (rootU == rootV) return;
+
+            if (size[rootU] < size[rootV]) {
+                parent[rootU] = rootV;
+                size[rootV] += size[rootU];
+            } else {
+                parent[rootV] = rootU;
+                size[rootU] += size[rootV];
+            }
+        }
+    }
+
+    public int largestIsland(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        DSU dsu = new DSU(m * n);
+
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+
+        // Step 1: Connect all adjacent 1s across the entire grid
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    int currentCell = i * n + j;
+                    for (int d = 0; d < 4; d++) {
+                        int ni = i + dx[d];
+                        int nj = j + dy[d];
+                        if (ni >= 0 && ni < m && nj >= 0 && nj < n && grid[ni][nj] == 1) {
+                            dsu.union(currentCell, ni * n + nj);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Step 2: Track maximum island size found
+        int max = 0;
+        boolean hasZero = false;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 0) {
+                    hasZero = true;
+                    Set<Integer> uniqueRoots = new HashSet<>();
+
+                    for (int d = 0; d < 4; d++) {
+                        int ni = i + dx[d];
+                        int nj = j + dy[d];
+                        if (ni >= 0 && ni < m && nj >= 0 && nj < n && grid[ni][nj] == 1) {
+                            uniqueRoots.add(dsu.find(ni * n + nj));
+                        }
+                    }
+
+                    int totalSize = 1; // 1 for the changed 0
+                    for (int root : uniqueRoots) {
+                        totalSize += dsu.size[root];
+                    }
+                    max = Math.max(max, totalSize);
+                }
+            }
+        }
+
+        // If there were no 0s, the entire grid is already one island
+        return hasZero ? max : m * n;
+    }
+}
