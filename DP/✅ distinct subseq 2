@@ -1,0 +1,23 @@
+class Solution {
+    public int distinctSubseqII(String s) {
+        int MOD = 1_000_000_007;
+        // endsWith[i] stores the count of distinct non-empty subsequences ending with character ('a' + i)
+        long[] endsWith = new long[26];
+        long total = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            int ch = s.charAt(i) - 'a';
+
+            // New subsequences created by appending current char to all existing subsequences + single char subsequence
+            long added = (total + 1 - endsWith[ch] + MOD) % MOD;
+
+            // Update total distinct subsequences
+            total = (total + added) % MOD;
+
+            // Update count of subsequences ending with character 'ch'
+            endsWith[ch] = (endsWith[ch] + added) % MOD;
+        }
+
+        return (int) total;
+    }
+}
